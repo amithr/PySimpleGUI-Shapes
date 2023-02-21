@@ -8,7 +8,7 @@ SQ_SIZE = 40                # Both width and height will be this value
 layout = [[sg.Graph(
             canvas_size=GRAPH_SIZE, graph_bottom_left=(0, 0), 
             graph_top_right=GRAPH_SIZE,   # Define the graph area
-            change_submits=True,    # mouse click events
+            enable_events=True,    # mouse click events
             drag_submits=True,      # mouse move events
             background_color='lightblue',
             key="-GRAPH-",
@@ -23,7 +23,6 @@ while True:
     event, values = window.read()
     if event == sg.WIN_CLOSED:
         break
-    print(event, values) if event != sg.TIMEOUT_EVENT else None # our normal debug print, but for this demo, don't spam output with timeouts
 
     if event == "-GRAPH-":  # if there's a "Graph" event, then it's a mouse movement. Move the square
         x, y = values["-GRAPH-"]        # get mouse position

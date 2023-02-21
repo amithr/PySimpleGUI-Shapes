@@ -1,13 +1,5 @@
 import PySimpleGUI as sg
 
-"""
-    Demo - Drawing and moving demo
-
-    This demo shows how to use a Graph Element to (optionally) display an image and then use the
-    mouse to "drag" and draw rectangles and circles.
-"""
-
-
 def main():
 
     sg.theme('Dark Blue 3')
@@ -30,7 +22,7 @@ def main():
         graph_bottom_left=(0, 0),
         graph_top_right=(400, 400),
         key="-GRAPH-",
-        change_submits=True,  # mouse click events
+        enable_events=True,  # mouse click events
         background_color='lightblue',
         drag_submits=True), sg.Col(col) ],
         [sg.Text(key='info', size=(60, 1))]]
@@ -45,34 +37,38 @@ def main():
 
     dragging = False
     start_point = end_point = prior_rect = None
-    graph.bind('<Button-3>', '+RIGHT+')
+    # Right mouse button
     while True:
         event, values = window.read()
         if event is None:
             break  # exit
         if event in ('-MOVE-', '-MOVEALL-'):
+            # Shows 4 arrow cursor
             graph.Widget.config(cursor='fleur')
             # graph.set_cursor(cursor='fleur')          # not yet released method... coming soon!
-        elif not event.startswith('-GRAPH-'):
-            # graph.set_cursor(cursor='left_ptr')       # not yet released method... coming soon!
+        elif not event.startswith('-GRAPH-'): 
+            # Once MOVE event is done, switches cursor back
+            # Doesn't apply when mouse is down on GRAPH
+            graph.set_cursor(cursor='left_ptr')       # not yet released method... coming soon!
             graph.Widget.config(cursor='left_ptr')
-
-        if event == "-GRAPH-":  # if there's a "Graph" event, then it's a mouse
+        if event == "-GRAPH-":  # Mouse clicks on Graph Elememt 
             x, y = values["-GRAPH-"]
-            if not dragging:
+            if not dragging: # On mouse down (which selects the shape)
                 start_point = (x, y)
                 dragging = True
-                drag_figures = graph.get_figures_at_location((x,y))
-                lastxy = x, y
+                drag_figures = graph.get_figures_at_location((x,y)) # Stores shapes at current mouse location
+                lastxy = x, y # current mouse coordinates
             else:
                 end_point = (x, y)
             if prior_rect:
+                # Clears prior drawing event
                 graph.delete_figure(prior_rect)
-            delta_x, delta_y = x - lastxy[0], y - lastxy[1]
-            lastxy = x,y
-            if None not in (start_point, end_point):
+            delta_x, delta_y = x - lastxy[0], y - lastxy[1] # x and y difference between intended and current coordinates
+            lastxy = x,y # intended, soon to be current coordinates
+            if None not in (start_point, end_point): # If movement has been initiated on Graph, but not finished
                 if values['-MOVE-']:
                     for fig in drag_figures:
+                        # Move figure at current location to location indicated by deltas
                         graph.move_figure(fig, delta_x, delta_y)
                         graph.update()
                 elif values['-RECT-']:
@@ -89,6 +85,7 @@ def main():
                 elif values['-CLEAR-']:
                     graph.erase()
                 elif values['-MOVEALL-']:
+                    # Move all graph contents by amount of delta
                     graph.move(delta_x, delta_y)
                 elif values['-FRONT-']:
                     for fig in drag_figures:
@@ -96,7 +93,7 @@ def main():
                 elif values['-BACK-']:
                     for fig in drag_figures:
                         graph.send_figure_to_back(fig)
-        elif event.endswith('+UP'):  # The drawing has ended because mouse up
+        elif event.endswith('+UP'): # This is what happens on mouse up
             info = window["info"]
             info.update(value=f"grabbed rectangle from {start_point} to {end_point}")
             start_point, end_point = None, None  # enable grabbing a new rect
