@@ -1,5 +1,7 @@
 import PySimpleGUI as sg
 
+# TODO: Get dimensions of figures
+
 options_layout = [
         [sg.T('Choose what clicking a figure does', enable_events=True)],
         [sg.R('Draw Rectangles', 1, key='-RECT-', enable_events=True)],
@@ -60,8 +62,6 @@ while True:
                     graph.move_figure(figure, x_diff, y_diff)
                     graph.update()
             elif values['-RECT-']:
-                print(mouse_down_point)
-                print(end_of_drag_point)
                 temporary_rect = graph.draw_rectangle(mouse_down_point, end_of_drag_point,fill_color='green', line_color='red')
             elif values['-ERASE-']:
                  for figure in figures_being_dragged:

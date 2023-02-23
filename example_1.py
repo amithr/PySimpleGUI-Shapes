@@ -1,5 +1,7 @@
 import PySimpleGUI as sg
 
+# https://www.tutorialspoint.com/pysimplegui/pysimplegui_graph_element.htm
+
 
 GRAPH_SIZE = (400, 400)
 START = (200, 200)       # We'll assume X and Y are both this value
@@ -15,9 +17,12 @@ layout = [[sg.Graph(
             pad=0)]]
 
 window = sg.Window("Simple Square Movement", layout, finalize=True, margins=(0,0))
-
+graph = window["-GRAPH-"]
 # draw the square we'll move around
-square = window["-GRAPH-"].draw_rectangle(START, (START[0]+SQ_SIZE, START[1]+SQ_SIZE), fill_color='black')
+square = graph.draw_rectangle(START, (START[0]+SQ_SIZE, START[1]+SQ_SIZE), fill_color='black')
+circle = graph.draw_circle(START, SQ_SIZE, fill_color="blue")
+image = graph.draw_image(filename="camera.png", location=(100,100))
+polygon = graph.draw_polygon([(10,10),(60,60),(30,90),(75,75),(10,36)], line_color="yellow", line_width= 5, fill_color='black')
 
 while True:
     event, values = window.read()
